@@ -14,7 +14,8 @@ import jakarta.validation.constraints.Pattern;
 @DiscriminatorColumn(name = "TIPO_VEHICULO", discriminatorType = DiscriminatorType.STRING)
 
 public  abstract class Vehicle extends Auditable {
-    @id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
 
