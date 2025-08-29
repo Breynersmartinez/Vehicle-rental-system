@@ -1,39 +1,69 @@
 package com.example.Vehicle_rental_system.model;
 
 import com.example.Vehicle_rental_system.adit.Auditable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "VEHICLE")
-public abstract class Vehicle extends Auditable {
-    @id
-    @Column (name = "ID")
-    protected Integer id;
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "TIPO_VEHICULO", discriminatorType = DiscriminatorType.STRING)
 
-    @Column(name = "PLACA")
+public  abstract class Vehicle extends Auditable {
+    @id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected int id;
+
+
+    @Column(name = "PLACA", unique = true, nullable = false)
+    @NotBlank(message = "La placa es obligatoria")
+    @Pattern(regexp = "^[A-Z]{3}\\d{3}$", message = "Formato de placa inválido (ej: ABC123)")
     protected String plate;
 
+    @NotBlank(message = "La marca es obligatoria")
     @Column(name = "MARCA")
     protected String brand;
 
+    @NotBlank(message = "El modelo es obligatorio")
     @Column(name = "MODELO")
     protected String model;
 
+    @NotBlank(message = "La autonomia debe ser > 0")
+    @Max(value = 1000, message = "La autonomía no puede exceder 1000 km")
     @Column(name = "AUTONOMIA")
     protected int autonomy;
 
+    @NotBlank(message = "El tipo de energia es obligatoria")
     @Column(name = "TIPO_ENERGIA")
     protected String typeEnergy;
 
+    @NotBlank(message = "LA disponibilidad es obligatorio")
     @Column(name = "DISPONIBILIDAD")
-    protected Boolean aviable; //disponiblilidad
+    protected Boolean aviable = true; //disponiblilidad
 
-// metodos abstractos de la clase
+//Constructor protegido para factory
+    protected Vehicle()
+    {
+
+    }
+
+    public Vehicle(int id, String plate, String brand, String model, int autonomy, String typeEnergy, Boolean aviable) {
+        this.id = id;
+        this.plate = plate;
+        this.brand = brand;
+        this.model = model;
+        this.autonomy = autonomy;
+        this.typeEnergy = typeEnergy;
+        this.aviable = aviable;
+    }
+
+
 
     public abstract String getType();
-    public abstract Vehicle clone();
 
     // metodos getters and setters
     public String getBrand() {
