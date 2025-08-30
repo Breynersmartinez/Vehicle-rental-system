@@ -2,56 +2,62 @@ package com.example.Vehicle_rental_system.service;
 
 
 
-import com.example.Vehicle_rental_system.model.Vehicle;
+import com.example.Vehicle_rental_system.model.vehicle.Vehicle;
 import com.example.Vehicle_rental_system.repository.VehicleRepository;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
-public   class VehicleService {
+@Transactional
+public   class VehicleService
+{
 
+    private  VehicleRepository vehicleRepository;
 
-    private final VehicleRepository vehicleRepository;
-
-    @Autowired
-    private final ModelMapper modelMapper;
-
-    public VehicleService(VehicleRepository vehicleRepository, ModelMapper modelMapper)
+    //Creacion de vehiulo usando factory pattern
+    public Vehicle createVehicle(String typeVehicle, String plate, String brand,
+                                 String model, int autonomy, String typeEnergy, Map<String, Object> specificParameters)
     {
-        this.vehicleRepository = vehicleRepository;
-        this.modelMapper = modelMapper;
+        VehiculoFactory factory = VehiculoFactory.obtainFactory(typeVehicle);
+        Vehicle vehicle = factory.createVehicle( typeVehicle,  plate,  brand,
+                 model,  autonomy,  typeEnergy, specificParameters);
+return vehicleRepository.save(vehicle);
+    }
+
+    //Obtener inventario como un arreglo
+    public Vehicle[] getInventoryAsArray()
+    {
+       List<Vehicle> vehicles = vehicleRepository.findAll();
+       return vehicles.toArray(new Vehicle[0]);
     }
 
 
-
-
-    public  List<Vehicle> getVehicle()
+    // Traer vehiclo por placa
+    Optional<Vehicle> searchByPlate(String plate)
     {
-        return vehicleRepository.findAll();
+        return vehicleRepository.findByPlate(plate);
     }
 
-
-    public  Optional<Vehicle> getVehicle(Integer id)
+    //Traer todos los vehiculos disponibles
+    List<Vehicle> getAviableVehicleOrdered()
     {
-        return vehicleRepository.findById(id);
+        return vehicleRepository.findByAviableTrueOrderByAutonomy();
     }
 
-
-    public  void saveOrUpdate(Vehicle vehicle)
+    // Cambiar las disponibilidad
+    public void changeAbiability(int id, Boolean aviable )
     {
-        vehicleRepository.save(vehicle);
-    }
-
-
-    public void delete(Integer id)
+    vehicleRepository.findById(id).ifPresent(vehiculo  ->
     {
-        vehicleRepository.deleteById(id);
-    }
+        vehiculo.setAviable(aviable);
+        vehicleRepository.save(vehiculo);
 
+    });
+    }
 
 
 }

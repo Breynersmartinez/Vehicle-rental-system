@@ -7,22 +7,22 @@
 - - autonomy : int
 - - typeEnergy : String
 - - Aviable : Boolean // disponibilidad 
-- + clone() : Vehicle
+
 - + getType() : String 
 
 ## 2) Car extends of Vehicle
 - - numberDoors : int 
-`- + clone() : Vehicle
+
 `- + getType() : String
 
 ## 3) Van  extends of Vehicle
 - - passengerCapacity : int 
-- + clone() : Vehicle
+
 - + getType() : String
 
 ## 4) Truck extends of Vehicle
 - - loadCapacity
-- + clone() : Vehicle
+
 - + getType() : String
 
 # Inventory of vehicles

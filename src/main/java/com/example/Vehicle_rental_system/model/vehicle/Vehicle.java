@@ -1,15 +1,13 @@
-package com.example.Vehicle_rental_system.model;
+package com.example.Vehicle_rental_system.model.vehicle;
 
 import com.example.Vehicle_rental_system.adit.Auditable;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
-@Table(name = "VEHICLE")
+@Table(name = "VEHICULO")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TIPO_VEHICULO", discriminatorType = DiscriminatorType.STRING)
 
@@ -46,13 +44,18 @@ public  abstract class Vehicle extends Auditable {
     @Column(name = "DISPONIBILIDAD")
     protected Boolean aviable = true; //disponiblilidad
 
-//Constructor protegido para factory
+    @NotBlank(message = "El tipo de vehiculo es obligatorio")
+    @Column(name = "TIPO_VEHICULO")
+    protected String typeVehicle ; //disponiblilidad
+
+
+    //Constructor protegido para factory
     protected Vehicle()
     {
 
     }
 
-    public Vehicle(int id, String plate, String brand, String model, int autonomy, String typeEnergy, Boolean aviable) {
+    public Vehicle(String typeVehicle, int id, String plate, String brand, String model, int autonomy, String typeEnergy, Boolean aviable) {
         this.id = id;
         this.plate = plate;
         this.brand = brand;
@@ -60,9 +63,17 @@ public  abstract class Vehicle extends Auditable {
         this.autonomy = autonomy;
         this.typeEnergy = typeEnergy;
         this.aviable = aviable;
+        this.typeVehicle = typeVehicle;
+
     }
 
+    public String getTypeVehicle() {
+        return typeVehicle;
+    }
 
+    public void setTypeVehicle(String typeVehicle) {
+        this.typeVehicle = typeVehicle;
+    }
 
     public abstract String getType();
 
